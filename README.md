@@ -1,4 +1,4 @@
-# (TODO: your game's title)
+# Mister Hot Dog
 
 Author: Alyssa Lee
 
