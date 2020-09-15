@@ -50,7 +50,7 @@ HotDogMode::~HotDogMode() {
 bool HotDogMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size) {
 
 	if (evt.type == SDL_KEYDOWN) {
-        glm::uvec2 newPos = player_pos.back(); 
+        glm::ivec2 newPos = player_pos.back(); 
 		if (evt.key.keysym.sym == SDLK_LEFT) {
             newPos.x--; 
 		} 
@@ -69,26 +69,29 @@ bool HotDogMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_siz
             player_pos.clear(); 
             player_pos.push_back(level.player_start_butt);
             player_pos.push_back(level.player_start_head);
-            std::cout << level.player_start_head.x; 
             player_length = 2; 
             extra_length = 0; 
             body_start = 0; 
             return true; 
 		}
+
+        // //deleted reverse functionality!!! so people will have to restart more >:()
+
         //check if the player is trying to reverse (move back from where they just came from) 
-        if(newPos.y == player_pos[body_start + player_length - 2].y && newPos.x == player_pos[body_start + player_length - 2].x) {
-            if(body_start > 0) {
-                body_start--;
-                player_pos.pop_back(); 
-            }
-            //if you reverse to the very beginning. don't let length go below 2
-            else if(body_start == 0 && player_length > 2) {
-                player_length--;
-                extra_length++; 
-                player_pos.pop_back(); 
-            }
-            return true; 
-        }
+        // if(newPos.y == player_pos[body_start + player_length - 2].y && newPos.x == player_pos[body_start + player_length - 2].x) {
+            
+        //     if(body_start > 0) {
+        //         body_start--;
+        //         player_pos.pop_back(); 
+        //     }
+        //     //if you reverse to the very beginning. don't let length go below 2
+        //     else if(body_start == 0 && player_length > 2) {
+        //         player_length--;
+        //         extra_length++; 
+        //         player_pos.pop_back(); 
+        //     }
+        //     return true; 
+        // }
 
         bool grounded = false; 
 
@@ -99,11 +102,16 @@ bool HotDogMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_siz
         if(newPos.y < 0 || newPos.y >= 30  || newPos.x < 0 || newPos.x >= 32) return true; 
 
         //check that you are not colliding with your own body, and that you are still grounded
-        for(int i = body_start + 1; i < body_start + player_length; i++)
+        //if you are about to grow, include the butt. otherwise don't. 
+        int grow = extra_length > 0 ? 0 : 1;
+        for(int i = body_start + grow; i < body_start + player_length; i++)
         {
             if(player_pos[i].x == newPos.x && player_pos[i].y == newPos.y) return true; 
             if(player_pos[i].y > 0 && level.walls[player_pos[i].x][player_pos[i].y-1]) grounded = true; 
         }
+        if(newPos.y > 0 && level.walls[newPos.x][newPos.y-1]) grounded = true; 
+        //if(extra_length > 0 && player_pos[body_start].y > 0 && level.walls[player_pos[body_start].x][player_pos[body_start].y-1]) grounded = true; 
+
         if(!grounded) return true; 
 
         //check that you are not colliding with a wall
@@ -161,6 +169,31 @@ void HotDogMode::draw(glm::uvec2 const &drawable_size) {
    	//--- set ppu state based on game state ---
     int currentSprite = 0; 
 
+    //draw bun 
+    ppu.sprites[currentSprite].x = level.bun.x * 8;
+    ppu.sprites[currentSprite].y = level.bun.y * 8; 
+    ppu.sprites[currentSprite].index = 19;
+    ppu.sprites[currentSprite].attributes = 0b10000001;
+    currentSprite++; 
+
+    ppu.sprites[currentSprite].x = level.bun.x * 8 + 8;
+    ppu.sprites[currentSprite].y = level.bun.y * 8; 
+    ppu.sprites[currentSprite].index = 20;
+    ppu.sprites[currentSprite].attributes = 0b10000001;
+    currentSprite++; 
+
+    ppu.sprites[currentSprite].x = level.bun.x * 8;
+    ppu.sprites[currentSprite].y = level.bun.y * 8 + 8; 
+    ppu.sprites[currentSprite].index = 16;
+    ppu.sprites[currentSprite].attributes = 0b10000001;
+    currentSprite++; 
+
+    ppu.sprites[currentSprite].x = level.bun.x * 8 + 8;
+    ppu.sprites[currentSprite].y = level.bun.y * 8 + 8; 
+    ppu.sprites[currentSprite].index = 17;
+    ppu.sprites[currentSprite].attributes = 0b10000001;
+    currentSprite++; 
+    
     //draw player body
     for(int i = body_start + 1; i < body_start + player_length - 1; i++)
     {
@@ -228,31 +261,6 @@ void HotDogMode::draw(glm::uvec2 const &drawable_size) {
         } 
     }
 
-    //draw bun 
-    ppu.sprites[currentSprite].x = level.bun.x * 8;
-    ppu.sprites[currentSprite].y = level.bun.y * 8; 
-    ppu.sprites[currentSprite].index = 19;
-    ppu.sprites[currentSprite].attributes = 0b10000001;
-    currentSprite++; 
-
-    ppu.sprites[currentSprite].x = level.bun.x * 8 + 8;
-    ppu.sprites[currentSprite].y = level.bun.y * 8; 
-    ppu.sprites[currentSprite].index = 20;
-    ppu.sprites[currentSprite].attributes = 0b10000001;
-    currentSprite++; 
-
-    ppu.sprites[currentSprite].x = level.bun.x * 8;
-    ppu.sprites[currentSprite].y = level.bun.y * 8 + 8; 
-    ppu.sprites[currentSprite].index = 16;
-    ppu.sprites[currentSprite].attributes = 0b10000001;
-    currentSprite++; 
-
-    ppu.sprites[currentSprite].x = level.bun.x * 8 + 8;
-    ppu.sprites[currentSprite].y = level.bun.y * 8 + 8; 
-    ppu.sprites[currentSprite].index = 17;
-    ppu.sprites[currentSprite].attributes = 0b10000001;
-    currentSprite++; 
-
     //draw text
     //if you won the game, write "nice :)"; 
     if(level_index == levels.size()){
@@ -292,19 +300,20 @@ void HotDogMode::draw(glm::uvec2 const &drawable_size) {
         currentSprite ++; 
     }
 
-	//background color light yellow:
-	ppu.background_color = glm::u8vec4(
-		0xff,
-		0xdd,
-		0xaa,
-		0xff
-	);
+
+    //background color light yellow:
+    ppu.background_color = glm::u8vec4(
+        0xff,
+        0xdd,
+        0xaa,
+        0xff
+    );
 
     //draw walls on background
 	for (uint32_t y = 0; y < PPU466::BackgroundHeight; ++y) {
 		for (uint32_t x = 0; x < PPU466::BackgroundWidth; ++x) {
 			ppu.background[x+PPU466::BackgroundWidth*y] = 255;
-            if(level.walls[x][y]) ppu.background[x+PPU466::BackgroundWidth*y] = 15 + (1 << 8); 
+            if(y < 30 && x < 32 && level.walls[x][y]) ppu.background[x+PPU466::BackgroundWidth*y] = 15 + (1 << 8); 
 		}
 	}
 

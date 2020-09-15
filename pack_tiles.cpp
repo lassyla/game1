@@ -10,11 +10,12 @@
 
 #include <vector>
 #include <fstream>
+#include <cstring>
 
 int main(int argc, char **argv) {
     std::cout << "packing tiles...\n"; 
 
-    uint8_t num_levels = 3; 
+    uint8_t num_levels = 9; 
     //files to read
 	std::string sprite_filenames[3] = {"../images/sprite1.png", "../images/sprite2.png","../images/sprite3.png"};
 	std::string level_filename = "../images/level";
