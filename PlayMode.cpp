@@ -6,6 +6,9 @@
 //for glm::value_ptr() :
 #include <glm/gtc/type_ptr.hpp>
 
+//For asset loading:
+#include "Load.hpp"
+
 #include <random>
 
 PlayMode::PlayMode() {
@@ -19,6 +22,8 @@ PlayMode::PlayMode() {
 	//Also, *don't* use these tiles in your game:
 
 	{ //use tiles 0-16 as some weird dot pattern thing:
+	
+
 		std::array< uint8_t, 8*8 > distance;
 		for (uint32_t y = 0; y < 8; ++y) {
 			for (uint32_t x = 0; x < 8; ++x) {
@@ -60,7 +65,7 @@ PlayMode::PlayMode() {
 		0b01111110,
 	};
 	ppu.tile_table[32].bit1 = {
-		0b00000000,
+		0b10000000,
 		0b00000000,
 		0b00011000,
 		0b00100100,
@@ -90,8 +95,8 @@ PlayMode::PlayMode() {
 	ppu.palette_table[7] = {
 		glm::u8vec4(0x00, 0x00, 0x00, 0x00),
 		glm::u8vec4(0xff, 0xff, 0x00, 0xff),
-		glm::u8vec4(0x00, 0x00, 0x00, 0xff),
-		glm::u8vec4(0x00, 0x00, 0x00, 0xff),
+		glm::u8vec4(0x00, 0x00, 0xff, 0xff),
+		glm::u8vec4(0x00, 0xff, 0xff, 0xff),
 	};
 
 	//used for the misc other sprites:
@@ -101,6 +106,8 @@ PlayMode::PlayMode() {
 		glm::u8vec4(0x00, 0x00, 0x00, 0xff),
 		glm::u8vec4(0x00, 0x00, 0x00, 0x00),
 	};
+
+	
 
 }
 

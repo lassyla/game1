@@ -71,18 +71,30 @@ if $(OS) = NT { #Windows
 
 #Store the names of all the .cpp files to build into a variable:
 GAME_NAMES =
-	PlayMode
+	HotDogMode
 	PPU466
 	main
 	load_save_png
 	gl_compile_program
 	Mode
+	data_path
 	GL
 	Load
 	;
 
+
+#add tile saving executable from https://github.com/15-466/15-466-f19-base1/blob/master/Jamfile
+
+PACK_TILES_NAMES =
+	pack_tiles
+	data_path
+	;
+
 LOCATE_TARGET = objs ; #put objects in 'objs' directory
-Objects $(GAME_NAMES:S=.cpp) ;
+Objects $(GAME_NAMES:S=.cpp) $(PACK_TILES_NAMES:S=.cpp) ;
 
 LOCATE_TARGET = dist ; #put main in 'dist' directory
-MainFromObjects game : $(GAME_NAMES:S=$(SUFOBJ)) ;
+MainFromObjects hotdog : $(GAME_NAMES:S=$(SUFOBJ)) ;
+
+LOCATE_TARGET = assets ; #put pack-tiles utility in the 'assets' directory:
+MainFromObjects pack_tiles : $(PACK_TILES_NAMES:S=$(SUFOBJ)) load_save_png$(SUFOBJ) ;

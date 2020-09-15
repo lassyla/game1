@@ -5,3 +5,8 @@ dist/game.pdb
 dist/SDL2.dll
 dist/game
 dist/game.exe
+dist/hotdog.ilk
+dist/hotdog.pdb
+dist/SDL2.dll
+dist/hotdog
+dist/hotdog.exe
